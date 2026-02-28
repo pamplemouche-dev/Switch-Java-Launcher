@@ -1,6 +1,25 @@
-#include <switch.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+
+// --- DÉCLARATIONS MANUELLES (Pour contourner le bug d'inclusion) ---
+typedef uint64_t u64;
+
+extern "C" {
+    void gfxInitDefault(void);
+    void gfxExit(void);
+    void consoleInit(void*);
+    void consoleUpdate(void*);
+    void hidScanInput(void);
+    u64 hidKeysDown(int);
+    bool appletMainLoop(void);
+}
+
+#define CONTROLLER_P1_AUTO 10
+#define KEY_PLUS (1 << 10)
+#define KEY_A (1 << 0)
+// ------------------------------------------------------------------
+
 #include "../include/launcher.hpp"
 #include "../include/ui.hpp"
 
