@@ -1,4 +1,4 @@
-# On définit le point d'entrée de devkitPro
+# Chemins officiels devkitPro
 DEVKITPRO := /opt/devkitpro
 DEVKITA64 := $(DEVKITPRO)/devkitA64
 
@@ -6,26 +6,20 @@ DEVKITA64 := $(DEVKITPRO)/devkitA64
 CXX      := $(DEVKITA64)/bin/aarch64-none-elf-g++
 NRO      := $(DEVKITPRO)/tools/bin/elf2nro
 
-# Dossiers du projet
-export INCLUDE := include
-export SOURCE  := source
-export LIBNX   := $(DEVKITPRO)/libnx
-
-# Nom du projet
-TARGET := MonLauncher
+# Configuration du projet
+TARGET   := MonLauncher
+SOURCES  := source/main.cpp source/launcher.cpp source/ui.cpp
+INCLUDES := -Iinclude -I$(DEVKITPRO)/libnx/include
 
 # Flags de compilation
-# -isystem dit au compilateur : "Ceci est une bibliothèque système, cherche dedans en priorité"
+# -isystem force le dossier libnx à être traité comme un dossier système
 CXXFLAGS := -O2 -Wall -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE \
             -D__SWITCH__ \
-            -isystem $(LIBNX)/include \
-            -I$(INCLUDE)
+            -isystem $(DEVKITPRO)/libnx/include \
+            $(INCLUDES)
 
 # Flags de lien
-LDFLAGS  := -specs=$(LIBNX)/switch.specs -L$(LIBNX)/lib -lnx
-
-# Fichiers sources (on les liste un par un pour éviter les erreurs de wildcard)
-SRCS := $(SOURCE)/main.cpp $(SOURCE)/launcher.cpp $(SOURCE)/ui.cpp
+LDFLAGS  := -specs=$(DEVKITPRO)/libnx/switch.specs -L$(DEVKITPRO)/libnx/lib -lnx
 
 all: $(TARGET).nro
 
@@ -34,7 +28,7 @@ $(TARGET).nro: $(TARGET).elf
 
 $(TARGET).elf:
 	@mkdir -p build
-	$(CXX) $(CXXFLAGS) $(SRCS) $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
 clean:
 	rm -rf build *.elf *.nro
