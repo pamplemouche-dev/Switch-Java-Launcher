@@ -1,39 +1,36 @@
-#include <switch.h>     // INDISPENSABLE EN PREMIER
+#include <switch.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+// On inclut tes fichiers
 #include "launcher.hpp"
-#include "ui.hpp" // On ajoute l'UI
+#include "ui.hpp"
+
+// Sécurité pour s'assurer que libnx est bien liée
+extern "C" {
+    void userAppInit(void) {
+        // Laisser vide
+    }
+}
 
 int main(int argc, char **argv) {
+    // Initialisation des graphismes et de la console
     gfxInitDefault();
     consoleInit(NULL);
 
-    prepareSystemForJava();
-
-    // Affichage initial
-    drawHeader();
-    drawMenu();
+    printf("\x1b[1;32m--- Launcher Mekanism Operationnel ---\x1b[0m\n\n");
+    printf("Utilisez les Joy-Cons pour naviguer.\n");
 
     while(appletMainLoop()) {
+        // Scan des entrées (boutons)
         hidScanInput();
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
-        if (kDown & KEY_PLUS) break; 
+        if (kDown & KEY_PLUS) break; // Quitter
 
         if (kDown & KEY_A) {
-            showStatus("Preparation de Mekanism...");
+            printf("Lancement Minecraft 1.16.5...\n");
             executeJava("1.16.5", "2500");
-        }
-
-        if (kDown & KEY_X) {
-            showStatus("Lancement version 1.20.1...");
-            executeJava("1.20.1", "2500");
-        }
-
-        if (kDown & KEY_Y) {
-            showStatus("Nettoyage en cours...");
-            // Logique de nettoyage ici
         }
 
         consoleUpdate(NULL);
