@@ -5,11 +5,10 @@ NRO       := $(DEVKITPRO)/tools/bin/elf2nro
 TARGET    := MonLauncher
 SOURCES   := source/main.cpp source/launcher.cpp source/ui.cpp
 
-# Options de compilation
 CXXFLAGS  := -O2 -Wall -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE -D__SWITCH__ -Iinclude
 
-# L'ordre ici est VITAL : les bibliothèques (-lnx) DOIVENT être à la fin
-LIBS      := -specs=$(DEVKITPRO)/libnx/switch.specs -L$(DEVKITPRO)/libnx/lib -lnx
+# On pointe directement sur le fichier .a et le fichier .specs
+LIBS      := -specs=$(DEVKITPRO)/libnx/switch.specs $(DEVKITPRO)/libnx/lib/libnx.a
 
 all: $(TARGET).nro
 
