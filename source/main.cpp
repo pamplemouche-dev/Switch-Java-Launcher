@@ -2,14 +2,13 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-// On force le compilateur C++ à ne pas modifier les noms des fonctions C de la Switch
+// --- DÉFINITIONS SYSTÈME SWITCH (AUTO-CONTENU) ---
 #ifdef __cplusplus
 extern "C" {
 #endif
-
     typedef uint64_t u64;
+    typedef uint32_t u32;
 
-    // Déclarations manuelles des fonctions de la libnx (SDK Switch)
     void gfxInitDefault(void);
     void gfxExit(void);
     void consoleInit(void*);
@@ -18,14 +17,17 @@ extern "C" {
     u64 hidKeysDown(int);
     bool appletMainLoop(void);
 
+    // Pour éviter les erreurs de liens sur certaines versions
+    void gfxFlushBuffers(void);
+    void gfxSwapBuffers(void);
 #ifdef __cplusplus
 }
 #endif
 
-// Constantes de contrôle
 #define CONTROLLER_P1_AUTO 10
 #define KEY_PLUS (1 << 10)
 #define KEY_A (1 << 0)
+// -----------------------------------------------
 
 #include "../include/launcher.hpp"
 #include "../include/ui.hpp"
