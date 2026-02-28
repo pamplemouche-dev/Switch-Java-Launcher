@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # On utilise l'image qui contient déjà tous les outils (A64, libnx, etc.)
     container: devkitpro/devkita64:latest
 
     steps:
@@ -18,14 +17,27 @@ jobs:
 
       - name: Compilation du Launcher
         run: |
-          # On s'assure que les outils sont bien dans le PATH
-          export PATH=$DEVKITPRO/devkitA64/bin:$DEVKITPRO/tools/bin:$PATH
+          # 1. Configuration des outils devkitPro
+          export DEVKITPRO=/opt/devkitpro
+          export DEVKITARM=$DEVKITPRO/devkitARM
+          export DEVKITA64=$DEVKITPRO/devkitA64
+          export PATH=$DEVKITA64/bin:$DEVKITPRO/tools/bin:$PATH
           
-          # Nettoyage et compilation
-          make clean
-          make
+          # 2. Vérification de la structure (pour le debug)
+          ls -R
+          
+          # 3. Lancement de la compilation
+          # On vérifie si le Makefile existe avant de lancer
+          if [ -f "Makefile" ]; then
+            make clean || true
+            make
+          else
+            echo "ERREUR : Makefile introuvable à la racine du dépôt !"
+            exit 1
+          fi
 
       - name: Sauvegarde du fichier NRO
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Mekanism-Launcher-NRO
