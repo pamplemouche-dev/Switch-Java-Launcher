@@ -1,27 +1,37 @@
 #include <switch.h>
 #include <stdio.h>
 #include "launcher.hpp"
+#include "ui.hpp" // On ajoute l'UI
 
 int main(int argc, char **argv) {
-    // Initialisation Switch
     gfxInitDefault();
     consoleInit(NULL);
 
-    // On force la RAM au max tout de suite
     prepareSystemForJava();
 
-    printf("\n--- Switch Java Launcher ---\n");
-    printf("Pret pour Mekanism.\n\n");
-    printf("Appuyez sur (A) pour lancer\n");
+    // Affichage initial
+    drawHeader();
+    drawMenu();
 
     while(appletMainLoop()) {
         hidScanInput();
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
-        if (kDown & KEY_PLUS) break; // Quitter
+        if (kDown & KEY_PLUS) break; 
 
         if (kDown & KEY_A) {
+            showStatus("Preparation de Mekanism...");
             executeJava("1.16.5", "2500");
+        }
+
+        if (kDown & KEY_X) {
+            showStatus("Lancement version 1.20.1...");
+            executeJava("1.20.1", "2500");
+        }
+
+        if (kDown & KEY_Y) {
+            showStatus("Nettoyage en cours...");
+            // Logique de nettoyage ici
         }
 
         consoleUpdate(NULL);
