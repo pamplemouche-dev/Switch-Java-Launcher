@@ -1,4 +1,4 @@
-#include "/opt/devkitpro/libnx/include/switch.h"
+#include <switch.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/launcher.hpp"
