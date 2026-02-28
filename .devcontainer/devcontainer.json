@@ -1,0 +1,12 @@
+{
+    "name": "Switch Dev Environment",
+    "image": "devkitpro/devkita64:latest",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools"
+            ]
+        }
+    },
+    "postCreateCommand": "sudo apt-get update && sudo dkms install devkitpro-pacman -y"
+}
