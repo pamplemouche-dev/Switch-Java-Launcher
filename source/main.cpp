@@ -5,7 +5,6 @@
 #include "../include/ui.hpp"
 
 int main(int argc, char **argv) {
-    // Initialisation
     gfxInitDefault();
     consoleInit(NULL);
 
@@ -17,7 +16,6 @@ int main(int argc, char **argv) {
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
         if (kDown & KEY_PLUS) break;
-
         if (kDown & KEY_A) {
             executeJava("1.16.5", "2500");
         }
