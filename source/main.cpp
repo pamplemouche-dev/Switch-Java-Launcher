@@ -2,65 +2,57 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-// --- DÉCLARATIONS MANUELLES POUR LA SWITCH ---
-// On définit les types et fonctions pour que le compilateur ne bloque pas
+// On force le compilateur à garder les noms EXACTS pour le Linker
+#ifdef __cplusplus
 extern "C" {
+#endif
+
     typedef uint64_t u64;
-    
-    // Fonctions graphiques et système
+
+    // Déclarations des fonctions Vitales de la Switch
     void gfxInitDefault(void);
     void gfxExit(void);
     void consoleInit(void*);
     void consoleUpdate(void*);
-    
-    // Entrées (Manette)
     void hidScanInput(void);
     u64 hidKeysDown(int);
-    
-    // Boucle d'application
     bool appletMainLoop(void);
-}
 
-// Constantes standard de la libnx
+#ifdef __cplusplus
+}
+#endif
+
+// Valeurs standard libnx
 #define CONTROLLER_P1_AUTO 10
 #define KEY_PLUS (1 << 10)
 #define KEY_A (1 << 0)
-// --------------------------------------------
 
-// Tes fichiers locaux
+// Inclusion de tes propres fichiers
 #include "../include/launcher.hpp"
 #include "../include/ui.hpp"
 
 int main(int argc, char **argv) {
-    // 1. Initialisation de l'affichage et de la console texte
+    // Initialisation hardware
     gfxInitDefault();
     consoleInit(NULL);
 
-    // 2. Affichage de l'interface (depuis ui.cpp)
     printHeader();
     printMenu();
 
-    // 3. Boucle principale (tourne tant que l'app n'est pas fermée)
+    // Boucle d'écoute des touches
     while(appletMainLoop()) {
-        // Scanner les entrées de la manette
         hidScanInput();
-        
-        // Récupérer les touches pressées ce tour-ci
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
-        // Bouton (+) pour quitter et revenir au menu Homebrew
         if (kDown & KEY_PLUS) break;
 
-        // Bouton (A) pour lancer la simulation du launcher (depuis launcher.cpp)
         if (kDown & KEY_A) {
             executeJava("1.16.5", "2500");
         }
 
-        // Rafraîchir l'écran
         consoleUpdate(NULL);
     }
 
-    // 4. Nettoyage avant de quitter
     gfxExit();
     return 0;
 }
