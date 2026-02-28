@@ -5,16 +5,23 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    # On utilise l'image officielle de devkitPro pour Switch
     container: devkitpro/devkita64:latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build
         run: |
-          # On s'assure que les outils sont bien dans le PATH
-          export PATH=$DEVKITPRO/devkitA64/bin:$PATH
+          # On définit les variables d'environnement de force
+          export DEVKITPRO=/opt/devkitpro
+          export DEVKITA64=$DEVKITPRO/devkitA64
+          export LIBNX=$DEVKITPRO/libnx
+          export PATH=$DEVKITA64/bin:$DEVKITPRO/tools/bin:$PATH
+          
+          # On vérifie si switch.h est bien là (pour le debug dans les logs)
+          ls -l $LIBNX/include/switch.h
+          
+          # On lance la compilation
           make
       
       - name: Upload Artifact
