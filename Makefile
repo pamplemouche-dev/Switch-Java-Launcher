@@ -8,10 +8,8 @@ SOURCES   := source/main.cpp source/launcher.cpp source/ui.cpp
 # Flags de compilation
 CXXFLAGS  := -O2 -Wall -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE -D__SWITCH__ -Iinclude
 
-# LIEN MANUEL : On donne le chemin complet vers la libnx.a
-# On force aussi l'utilisation du fichier specs avec son chemin complet
-LIBS      := -specs=$(DEVKITPRO)/libnx/switch.specs \
-             $(DEVKITPRO)/libnx/lib/libnx.a
+# On force l'ordre : Fichiers sources D'ABORD, bibliothèques APRES
+LIBS      := -specs=$(DEVKITPRO)/libnx/switch.specs -L$(DEVKITPRO)/libnx/lib -lnx
 
 all: $(TARGET).nro
 
