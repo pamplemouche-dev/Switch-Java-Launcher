@@ -21,7 +21,7 @@ OBJCOPY := $(DEVKITPRO)/devkitA64/bin/aarch64-none-elf-objcopy
 I_FLAGS     := -I$(CURDIR)/$(INCLUDES) -I$(LIBNX)/include
 CFLAGS      := -g -Wall -O2 -ffunction-sections $(ARCH) $(I_FLAGS) -D__SWITCH__
 CXXFLAGS    := $(CFLAGS) -fno-rtti -fno-exceptions
-LDFLAGS     := -specs=$(DEVKITPRO)/libnx/switch.specs $(ARCH) -L$(LIBNX)/lib
+LDFLAGS := -specs=$(DEVKITPRO)/libnx/switch.specs $(ARCH) -L$(LIBNX)/lib -lnx
 
 # Bibliothèques à lier
 LIBS    := -lnx
