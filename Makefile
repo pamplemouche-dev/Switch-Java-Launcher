@@ -1,38 +1,43 @@
-# Chemins forcés
+# --- CONFIGURATION DES CHEMINS (NE PAS MODIFIER) ---
 DEVKITPRO := /opt/devkitpro
-LIBNX     := $(DEVKITPRO)/libnx
 DEVKITA64 := $(DEVKITPRO)/devkitA64
+LIBNX     := $(DEVKITPRO)/libnx
 
-# Vérification immédiate
-ifeq ($(wildcard $(LIBNX)/include/switch.h),)
-$(error ERREUR : La bibliotheque libnx est introuvable dans $(LIBNX))
-endif
-
-# Outils
+# Outils de compilation
 CXX      := $(DEVKITA64)/bin/aarch64-none-elf-g++
 ELF2NRO  := $(DEVKITPRO)/tools/bin/elf2nro
 
-# Configuration
+# Nom de ton application
 TARGET   := MonLauncher
-SOURCES  := source
-INC_DIRS := -Iinclude -I$(LIBNX)/include
 
-# Flags de l'architecture Switch
+# --- OPTIONS DE COMPILATION ---
+# On force l'inclusion de TOUS les dossiers nécessaires
+INCLUDES := -Iinclude -I$(LIBNX)/include -I$(DEVKITPRO)/libnx/include
+
+# Flags pour l'architecture de la Switch (Cortex-A57)
 ARCH     := -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
-CXXFLAGS := -O2 -Wall $(ARCH) $(INC_DIRS) -D__SWITCH__
+# Flags du compilateur
+# -D__SWITCH__ est crucial pour activer le code spécifique à la console
+CXXFLAGS := -O2 -Wall $(ARCH) $(INCLUDES) -D__SWITCH__ -fno-rtti -fno-exceptions
+
+# Flags du Linker (C'est ici qu'on soude les bibliothèques)
+# L'ordre compte : -lnx doit TOUJOURS être à la fin
 LDFLAGS  := -specs=$(LIBNX)/switch.specs $(ARCH) -L$(LIBNX)/lib -lnx
 
-# --- REGLES ---
+# --- ETAPES DE CONSTRUCTION ---
 
 all: $(TARGET).nro
 
 $(TARGET).nro: $(TARGET).elf
-	$(ELF2NRO) $< $@ --name="JavaLauncher"
+	@echo "Conversion de l'ELF en NRO..."
+	@$(ELF2NRO) $< $@ --name="$(TARGET)" --author="Dev" --version="1.0.0"
+	@echo "Terminé ! Fichier $(TARGET).nro généré."
 
 $(TARGET).elf:
 	@mkdir -p build
-	$(CXX) $(CXXFLAGS) $(SOURCES)/*.cpp $(LDFLAGS) -o $@
+	@echo "Compilation des fichiers sources..."
+	$(CXX) $(CXXFLAGS) source/*.cpp $(LDFLAGS) -o $@
 
 clean:
 	rm -rf build $(TARGET).elf $(TARGET).nro
