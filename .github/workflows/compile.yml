@@ -1,0 +1,32 @@
+name: Build Switch NRO
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # On utilise l'image qui contient déjà tous les outils (A64, libnx, etc.)
+    container: devkitpro/devkita64:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compilation du Launcher
+        run: |
+          # On s'assure que les outils sont bien dans le PATH
+          export PATH=$DEVKITPRO/devkitA64/bin:$DEVKITPRO/tools/bin:$PATH
+          
+          # Nettoyage et compilation
+          make clean
+          make
+
+      - name: Sauvegarde du fichier NRO
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mekanism-Launcher-NRO
+          path: ./*.nro
