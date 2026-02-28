@@ -1,19 +1,18 @@
-#include <switch.h>
+// On force le chemin vers la bibliothèque Switch
+#include "/opt/devkitpro/libnx/include/switch.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-    // Initialisation de base
+    // Initialisation
     gfxInitDefault();
     consoleInit(NULL);
 
-    printf("Launcher Switch Java - Pret!\n");
-    printf("Appuyez sur (+) pour quitter.\n");
+    printf("Test de compilation forcee...\n");
 
     while(appletMainLoop()) {
         hidScanInput();
-        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-        if (kDown & KEY_PLUS) break;
+        if (hidKeysDown(CONTROLLER_P1_AUTO) & KEY_PLUS) break;
         consoleUpdate(NULL);
     }
 
