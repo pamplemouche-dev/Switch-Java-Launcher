@@ -1,4 +1,4 @@
-#include "ui.hpp"
+#include "../include/ui.hpp"
 #include <stdio.h>
 
 void printHeader() {
@@ -8,7 +8,6 @@ void printHeader() {
 }
 
 void printMenu() {
-    printf("Contrôles :\n");
-    printf(" (A) Lancer Minecraft 1.16.5\n");
-    printf(" (+) Retour au menu Switch\n\n");
+    printf("Appuyez sur (A) pour Minecraft\n");
+    printf("Appuyez sur (+) pour quitter\n\n");
 }
