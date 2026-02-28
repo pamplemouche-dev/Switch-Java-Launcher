@@ -1,6 +1,5 @@
-#ifndef UI_HPP
-#define UI_HPP
+#ifndef LAUNCHER_HPP
+#define LAUNCHER_HPP
 #include "/opt/devkitpro/libnx/include/switch.h"
-void printHeader();
-void printMenu();
+void executeJava(const char* version, const char* ram);
 #endif
