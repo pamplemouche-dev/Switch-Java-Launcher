@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-// On force le compilateur à garder les noms EXACTS pour le Linker
+// On force le compilateur C++ à ne pas modifier les noms des fonctions C de la Switch
 #ifdef __cplusplus
 extern "C" {
 #endif
 
     typedef uint64_t u64;
 
-    // Déclarations des fonctions Vitales de la Switch
+    // Déclarations manuelles des fonctions de la libnx (SDK Switch)
     void gfxInitDefault(void);
     void gfxExit(void);
     void consoleInit(void*);
@@ -22,24 +22,21 @@ extern "C" {
 }
 #endif
 
-// Valeurs standard libnx
+// Constantes de contrôle
 #define CONTROLLER_P1_AUTO 10
 #define KEY_PLUS (1 << 10)
 #define KEY_A (1 << 0)
 
-// Inclusion de tes propres fichiers
 #include "../include/launcher.hpp"
 #include "../include/ui.hpp"
 
 int main(int argc, char **argv) {
-    // Initialisation hardware
     gfxInitDefault();
     consoleInit(NULL);
 
     printHeader();
     printMenu();
 
-    // Boucle d'écoute des touches
     while(appletMainLoop()) {
         hidScanInput();
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
