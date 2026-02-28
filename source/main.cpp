@@ -1,4 +1,3 @@
-C++
 #include <switch.h>     // INDISPENSABLE EN PREMIER
 #include <stdio.h>
 #include <stdlib.h>
