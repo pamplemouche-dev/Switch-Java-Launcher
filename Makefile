@@ -1,18 +1,17 @@
-# Chemins devkitPro
 DEVKITPRO := /opt/devkitpro
 CXX       := $(DEVKITPRO)/devkitA64/bin/aarch64-none-elf-g++
 NRO       := $(DEVKITPRO)/tools/bin/elf2nro
 
-# Nom du projet
 TARGET    := MonLauncher
 SOURCES   := source/main.cpp source/launcher.cpp source/ui.cpp
 
-# Options de compilation
+# Flags de compilation
 CXXFLAGS  := -O2 -Wall -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE -D__SWITCH__ -Iinclude
 
-# Options de lien (L'ordre des flags ici est VITAL)
-# On force l'inclusion de libnx APRES les fichiers sources
-LIBS      := -specs=$(DEVKITPRO)/libnx/switch.specs -L$(DEVKITPRO)/libnx/lib -lnx
+# LIEN MANUEL : On donne le chemin complet vers la libnx.a
+# On force aussi l'utilisation du fichier specs avec son chemin complet
+LIBS      := -specs=$(DEVKITPRO)/libnx/switch.specs \
+             $(DEVKITPRO)/libnx/lib/libnx.a
 
 all: $(TARGET).nro
 
