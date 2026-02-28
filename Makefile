@@ -1,19 +1,40 @@
+# On définit le point d'entrée de devkitPro
+DEVKITPRO := /opt/devkitpro
+DEVKITA64 := $(DEVKITPRO)/devkitA64
+
 # Outils
-CXX      := /opt/devkitpro/devkitA64/bin/aarch64-none-elf-g++
-ELF2NRO  := /opt/devkitpro/tools/bin/elf2nro
+CXX      := $(DEVKITA64)/bin/aarch64-none-elf-g++
+NRO      := $(DEVKITPRO)/tools/bin/elf2nro
 
-# Cibles
-TARGET   := MonLauncher
-SOURCES  := source/main.cpp source/launcher.cpp source/ui.cpp
+# Dossiers du projet
+export INCLUDE := include
+export SOURCE  := source
+export LIBNX   := $(DEVKITPRO)/libnx
 
-all:
+# Nom du projet
+TARGET := MonLauncher
+
+# Flags de compilation
+# -isystem dit au compilateur : "Ceci est une bibliothèque système, cherche dedans en priorité"
+CXXFLAGS := -O2 -Wall -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE \
+            -D__SWITCH__ \
+            -isystem $(LIBNX)/include \
+            -I$(INCLUDE)
+
+# Flags de lien
+LDFLAGS  := -specs=$(LIBNX)/switch.specs -L$(LIBNX)/lib -lnx
+
+# Fichiers sources (on les liste un par un pour éviter les erreurs de wildcard)
+SRCS := $(SOURCE)/main.cpp $(SOURCE)/launcher.cpp $(SOURCE)/ui.cpp
+
+all: $(TARGET).nro
+
+$(TARGET).nro: $(TARGET).elf
+	$(NRO) $< $@ --name="Mekanism" --author="Dev"
+
+$(TARGET).elf:
 	@mkdir -p build
-	$(CXX) -O2 -Wall -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE \
-	-D__SWITCH__ -Iinclude -I/opt/devkitpro/libnx/include \
-	$(SOURCES) \
-	-specs=/opt/devkitpro/libnx/switch.specs \
-	-L/opt/devkitpro/libnx/lib -lnx -o $(TARGET).elf
-	$(ELF2NRO) $(TARGET).elf $(TARGET).nro --name="Mekanism Launcher"
+	$(CXX) $(CXXFLAGS) $(SRCS) $(LDFLAGS) -o $@
 
 clean:
 	rm -rf build *.elf *.nro
