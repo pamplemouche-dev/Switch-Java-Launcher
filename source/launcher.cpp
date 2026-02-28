@@ -1,12 +1,30 @@
-#ifndef LAUNCHER_HPP
-#define LAUNCHER_HPP
+#include "launcher.hpp"
+#include <stdio.h>
+#include <stdlib.h>
 
-#include <switch.h>
+// On définit la taille de la RAM disponible pour l'application (3 Go)
+u32 __nx_applet_heap_size = 0xC0000000; 
 
-// Alloue la RAM et prépare les services
-void prepareSystemForJava();
+void prepareSystemForJava() {
+    // Désactive la mise en veille auto pendant que le launcher tourne
+    appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
+}
 
-// Execute le moteur java avec les paramètres choisis
-void executeJava(const char* version, const char* ram);
+void executeJava(const char* version, const char* ram) {
+    // Construction de la ligne de commande pour lancer Minecraft
+    // On part du principe que la JRE est dans /bin/java sur la SD
+    char cmd[1024];
+    snprintf(cmd, sizeof(cmd), 
+             "sdmc:/switch/MonLauncher/bin/java -Xmx%sM -Xms%sM "
+             "-jar sdmc:/switch/MonLauncher/.minecraft/versions/%s.jar", 
+             ram, ram, version);
 
-#endif
+    printf("[EXEC] Lancement en cours...\n");
+    
+    // Appel du moteur Java
+    int result = system(cmd);
+
+    if (result != 0) {
+        printf("[ERREUR] Le moteur Java a quitte avec le code : %d\n", result);
+    }
+}
