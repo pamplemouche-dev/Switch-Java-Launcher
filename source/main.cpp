@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-// --- DÉCLARATIONS DE SECOURS (Si switch.h est introuvable) ---
+// --- SECTIONS DE SECOURS INTÉGRÉES ---
 typedef uint64_t u64;
+
+// On indique au compilateur que ces fonctions existent ailleurs (dans libnx)
 extern "C" {
     void gfxInitDefault(void);
     void gfxExit(void);
@@ -13,26 +15,31 @@ extern "C" {
     u64 hidKeysDown(int);
     bool appletMainLoop(void);
 }
+
+// Valeurs standard pour la Switch
 #define CONTROLLER_P1_AUTO 10
 #define KEY_PLUS (1 << 10)
 #define KEY_A (1 << 0)
-// -----------------------------------------------------------
+// -------------------------------------
 
 #include "../include/launcher.hpp"
 #include "../include/ui.hpp"
 
 int main(int argc, char **argv) {
+    // Initialisation du hardware
     gfxInitDefault();
     consoleInit(NULL);
 
     printHeader();
     printMenu();
 
+    // Boucle de rendu
     while(appletMainLoop()) {
         hidScanInput();
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
-        if (kDown & KEY_PLUS) break;
+        if (kDown & KEY_PLUS) break; // Retour menu
+
         if (kDown & KEY_A) {
             executeJava("1.16.5", "2500");
         }
